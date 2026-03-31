@@ -24,11 +24,11 @@ Write `wiki.config.json`:
 
 ```json
 {
-  "navigation": "./nav.md",
   "title": "My Wiki",
+  "navigation": "./nav.md",
+  "footer": "./footer.md",
   "defaultPage": "intro",
-  "tableOfContents": true,
-  "footer": "./footer.md"
+  "tableOfContents": true
 }
 ```
 
@@ -53,8 +53,8 @@ Write a minimal `index.html`:
   </head>
   <body>
     <script type="module">
-      import { initWikiFromJson } from 'https://hacknock.github.io/lobster-wiki/lobster-wiki.js';
-      initWikiFromJson('./wiki.config.json');
+      import { initWiki } from "https://hacknock.github.io/lobster-wiki/lobster-wiki.js";
+      initWiki("./wiki.config.json");
     </script>
   </body>
 </html>
@@ -76,17 +76,17 @@ Write your content pages in `content/` and serve with any static file server.
 
 All options are defined in `wiki.config.json`:
 
-| Key | Description | Default |
-|---|---|---|
-| `navigation` | Path to sidebar navigation Markdown file (required) | — |
-| `title` | Site title (used in header and `<title>`) | — |
-| `header` | Path to header Markdown file | — |
-| `footer` | Path to footer Markdown file | — |
-| `contentDir` | Directory containing page Markdown files | `./content/` |
-| `defaultPage` | Default page slug when no `?page=` is specified | `intro` |
-| `tableOfContents` | Enable auto-generated table of contents (`true` or `{ "minLevel": 2, "maxLevel": 4 }`) | `false` |
-| `routing` | Routing mode: `query` or `hash` | `query` |
-| `lobsterUrl` | URL to lobster.js | GitHub Pages CDN |
+| Key               | Description                                                                            | Default          |
+| ----------------- | -------------------------------------------------------------------------------------- | ---------------- |
+| `title`           | Site title (used in header and `<title>`)                                              | —                |
+| `navigation`      | Path to sidebar navigation Markdown file (required)                                    | —                |
+| `header`          | Path to header Markdown file                                                           | —                |
+| `footer`          | Path to footer Markdown file                                                           | —                |
+| `contentDir`      | Directory containing page Markdown files                                               | `./content/`     |
+| `defaultPage`     | Default page slug when no `?page=` is specified                                        | `intro`          |
+| `tableOfContents` | Enable auto-generated table of contents (`true` or `{ "minLevel": 2, "maxLevel": 4 }`) | `false`          |
+| `routing`         | Routing mode: `query` or `hash`                                                        | `query`          |
+| `lobsterUrl`      | URL to lobster.js                                                                      | GitHub Pages CDN |
 
 ## Development
 

@@ -316,7 +316,26 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
 // initWiki — main entry point
 // ============================================================
 
-export async function initWiki(config: WikiConfig): Promise<void> {
+/**
+ * Initialize a lobster-wiki site.
+ * @param configOrUrl - A WikiConfig object or a path to a JSON config file.
+ */
+export async function initWiki(
+  configOrUrl: WikiConfig | string
+): Promise<void> {
+  let config: WikiConfig;
+  if (typeof configOrUrl === "string") {
+    const response = await fetch(new URL(configOrUrl, location.href).href);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load wiki config from ${configOrUrl}: ${response.status} ${response.statusText}`
+      );
+    }
+    config = await response.json();
+  } else {
+    config = configOrUrl;
+  }
+
   const lobsterUrl = config.lobsterUrl ?? DEFAULT_LOBSTER_URL;
   const contentDir = config.contentDir ?? DEFAULT_CONTENT_DIR;
 
@@ -366,19 +385,4 @@ export async function initWiki(config: WikiConfig): Promise<void> {
   // Load initial page
   const initialPage = getCurrentPage(config);
   await loadPage(initialPage);
-}
-
-// ============================================================
-// initWikiFromJson — load config from a JSON file and initialize
-// ============================================================
-
-export async function initWikiFromJson(configUrl: string): Promise<void> {
-  const response = await fetch(new URL(configUrl, location.href).href);
-  if (!response.ok) {
-    throw new Error(
-      `Failed to load wiki config from ${configUrl}: ${response.status} ${response.statusText}`
-    );
-  }
-  const config: WikiConfig = await response.json();
-  return initWiki(config);
 }
