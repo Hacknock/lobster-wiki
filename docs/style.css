@@ -180,6 +180,10 @@ a:hover { text-decoration: underline; }
    ═══════════════════════════════════════════════════════════════ */
 
 /* Headings */
+.lbs-heading-1, .lbs-heading-2, .lbs-heading-3,
+.lbs-heading-4, .lbs-heading-5, .lbs-heading-6 {
+  scroll-margin-top: calc(var(--lbw-header-height) + 1rem);
+}
 .lbs-heading-1 { font-size: 1.9em; font-weight: 700; margin: 0 0 0.5em; }
 .lbs-heading-2 { font-size: 1.4em; font-weight: 600; margin: 1.6em 0 0.4em; border-bottom: 1px solid var(--lbw-border); padding-bottom: 0.25em; }
 .lbs-heading-3 { font-size: 1.15em; font-weight: 600; margin: 1.3em 0 0.3em; }

@@ -302,6 +302,14 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
     const a = document.createElement("a");
     a.href = `#${entry.id}`;
     a.textContent = entry.text;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById(entry.id);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+        history.replaceState(null, "", `#${entry.id}`);
+      }
+    });
     li.appendChild(a);
     list.appendChild(li);
   }
