@@ -1,0 +1,266 @@
+/* lobster-wiki — default stylesheet */
+
+/* ═══════════════════════════════════════════════════════════════
+   Wiki layout (lbw-* classes)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Design tokens ─────────────────────────────────────────── */
+:root {
+  --lbw-font: system-ui, -apple-system, sans-serif;
+  --lbw-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --lbw-color:          #1a1a1a;
+  --lbw-muted:          #6b7280;
+  --lbw-link:           #2563eb;
+  --lbw-border:         #e5e7eb;
+  --lbw-code-bg:        #f3f4f6;
+  --lbw-blockquote-border: #d1d5db;
+
+  --lbw-sidebar-width:  220px;
+  --lbw-toc-width:      200px;
+  --lbw-header-height:  52px;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--lbw-font);
+  color: var(--lbw-color);
+  line-height: 1.7;
+  background: #fff;
+}
+a { color: var(--lbw-link); }
+a:hover { text-decoration: underline; }
+
+/* ─── Header ───────────────────────────────────────────────── */
+.lbw-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--lbw-header-height);
+  background: #fff;
+  border-bottom: 1px solid var(--lbw-border);
+}
+.lbw-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 100%;
+  padding: 0 1.5rem;
+}
+.lbw-logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--lbw-color);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+.lbw-logo:hover { text-decoration: none; color: var(--lbw-link); }
+
+/* ─── Body layout ───────────────────────────────────────────── */
+.lbw-body {
+  display: flex;
+  min-height: calc(100vh - var(--lbw-header-height) - 48px);
+}
+
+/* ─── Sidebar ───────────────────────────────────────────────── */
+.lbw-sidebar {
+  width: var(--lbw-sidebar-width);
+  flex-shrink: 0;
+  border-right: 1px solid var(--lbw-border);
+  padding: 1.25rem 0 1.25rem 0.75rem;
+  position: sticky;
+  top: var(--lbw-header-height);
+  height: calc(100vh - var(--lbw-header-height));
+  overflow-y: auto;
+}
+
+/* lobster.js renders nav.md as lists — style them as a menu */
+.lbw-sidebar .lbs-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lbw-sidebar .lbs-ul .lbs-ul {
+  padding-left: 0.75rem;
+}
+.lbw-sidebar .lbs-list-item {
+  margin: 0;
+}
+.lbw-sidebar .lbs-list-item > .lbs-paragraph {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lbw-muted);
+  padding: 0.8rem 1.25rem 0.2rem;
+}
+.lbw-sidebar a {
+  display: block;
+  padding: 0.3rem 1.25rem;
+  color: var(--lbw-color);
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-left: 2px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+}
+.lbw-sidebar a:hover {
+  background: var(--lbw-code-bg);
+  text-decoration: none;
+}
+.lbw-sidebar a.lbw-active {
+  border-left-color: var(--lbw-link);
+  color: var(--lbw-link);
+  font-weight: 600;
+  background: #eff6ff;
+}
+
+/* ─── Main content ──────────────────────────────────────────── */
+.lbw-main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem;
+  max-width: 800px;
+}
+
+/* ─── TOC (on this page) ────────────────────────────────────── */
+.lbw-toc {
+  width: var(--lbw-toc-width);
+  flex-shrink: 0;
+  padding: 1.25rem 1rem;
+  position: sticky;
+  top: var(--lbw-header-height);
+  height: calc(100vh - var(--lbw-header-height));
+  overflow-y: auto;
+}
+.lbw-toc-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lbw-muted);
+  padding: 0 0 0.5rem;
+}
+.lbw-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lbw-toc-item a {
+  display: block;
+  padding: 0.15rem 0;
+  color: var(--lbw-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.1s;
+}
+.lbw-toc-item a:hover {
+  color: var(--lbw-link);
+  text-decoration: none;
+}
+.lbw-toc-level-3 { padding-left: 0.75rem; }
+.lbw-toc-level-4 { padding-left: 1.5rem; }
+.lbw-toc-level-5 { padding-left: 2.25rem; }
+.lbw-toc-level-6 { padding-left: 3rem; }
+
+/* ─── Footer ───────────────────────────────────────────────── */
+.lbw-footer {
+  border-top: 1px solid var(--lbw-border);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--lbw-muted);
+  text-align: center;
+}
+.lbw-footer p { margin: 0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   lobster.js element styles (lbs-* classes)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Headings */
+.lbs-heading-1 { font-size: 1.9em; font-weight: 700; margin: 0 0 0.5em; }
+.lbs-heading-2 { font-size: 1.4em; font-weight: 600; margin: 1.6em 0 0.4em; border-bottom: 1px solid var(--lbw-border); padding-bottom: 0.25em; }
+.lbs-heading-3 { font-size: 1.15em; font-weight: 600; margin: 1.3em 0 0.3em; }
+.lbs-heading-4 { font-size: 1em;    font-weight: 600; margin: 1.1em 0 0.25em; }
+.lbs-heading-5 { font-size: 0.9em;  font-weight: 600; margin: 1em 0 0.2em; }
+.lbs-heading-6 { font-size: 0.85em; font-weight: 600; margin: 1em 0 0.2em; color: var(--lbw-muted); }
+
+/* Paragraph */
+.lbs-paragraph { margin: 0.75em 0; }
+
+/* Inline */
+.lbs-emphasis       { font-style: italic; }
+.lbs-strong         { font-weight: 700; }
+.lbs-strikethrough  { text-decoration: line-through; color: var(--lbw-muted); }
+.lbs-code-span      { font-family: var(--lbw-mono); font-size: 0.875em; background: var(--lbw-code-bg); padding: 0.1em 0.4em; border-radius: 3px; }
+
+/* Horizontal rule */
+.lbs-hr { border: none; border-top: 1px solid var(--lbw-border); margin: 2em 0; }
+
+/* Code block */
+.lbs-code-block { margin: 1em 0; border-radius: 6px; overflow: hidden; border: 1px solid var(--lbw-border); }
+.lbs-code-block pre { margin: 0; padding: 1em; background: var(--lbw-code-bg); overflow-x: auto; }
+.lbs-code-block code { font-family: var(--lbw-mono); font-size: 0.875em; }
+.lbs-code-filename { font-family: var(--lbw-mono); font-size: 0.75em; padding: 0.3em 1em; background: var(--lbw-border); color: var(--lbw-muted); }
+
+/* Blockquote */
+.lbs-blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 4px solid var(--lbw-blockquote-border); color: var(--lbw-muted); }
+.lbs-blockquote .lbs-paragraph { margin: 0.25em 0; }
+
+/* Lists */
+.lbs-ul, .lbs-ol { margin: 0.5em 0; padding-left: 1.8em; }
+.lbs-list-item   { margin: 0.2em 0; }
+.lbs-ul .lbs-ul, .lbs-ul .lbs-ol,
+.lbs-ol .lbs-ul, .lbs-ol .lbs-ol { margin: 0.2em 0; }
+.lbs-checkbox { margin-right: 0.4em; }
+
+/* Table */
+.lbs-table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+.lbs-table th,
+.lbs-table td  { border: 1px solid var(--lbw-border); padding: 0.5em 0.75em; text-align: left; }
+.lbs-table th  { background: var(--lbw-code-bg); font-weight: 600; }
+
+/* Silent table — layout grid */
+.lbs-table-silent { table-layout: fixed; width: 100%; }
+.lbs-table-silent thead { display: none; }
+.lbs-table-silent th,
+.lbs-table-silent td { border: none; vertical-align: top; padding: 0.5rem 1.5rem 0.5rem 0; }
+.lbs-table-silent th:last-child,
+.lbs-table-silent td:last-child { padding-right: 0; }
+
+/* Image */
+.lbs-image { max-width: 100%; }
+
+/* Details / collapsible */
+.lbs-details { margin: 1em 0; border: 1px solid var(--lbw-border); border-radius: 6px; padding: 0.5em 1em; }
+.lbs-summary { cursor: pointer; font-weight: 600; padding: 0.25em 0; }
+
+/* Footnotes */
+.lbs-footnote-ref a { font-size: 0.8em; vertical-align: super; text-decoration: none; color: var(--lbw-link); }
+.lbs-footnotes { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--lbw-border); font-size: 0.9em; }
+.lbs-footnotes ol { padding-left: 1.5em; }
+.lbs-footnote-item { margin: 0.3em 0; color: var(--lbw-muted); }
+
+/* Warp — hidden anchors */
+.lbs-warp { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .lbw-toc { display: none; }
+}
+@media (max-width: 640px) {
+  .lbw-body { flex-direction: column; }
+  .lbw-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--lbw-border);
+    padding: 0.5rem 0;
+  }
+  .lbw-main { padding: 1.25rem 1rem; }
+}

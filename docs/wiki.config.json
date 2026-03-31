@@ -1,0 +1,7 @@
+{
+  "navigation": "./nav.md",
+  "title": "lobster-wiki",
+  "defaultPage": "intro",
+  "tableOfContents": true,
+  "footer": "./footer.md"
+}
