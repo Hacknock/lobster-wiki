@@ -91,4 +91,4 @@ lbs-footnote-ref / lbs-footnotes Footnotes
 
 ---
 
-> **This showcase** is itself built with lobster.js. The sidebar is `nav.md`, and each page is a separate Markdown file loaded dynamically via `?page=` query parameters.
+> **This site** is built with [lobster-wiki](https://github.com/Hacknock/lobster-wiki), a Markdown-driven wiki extension for lobster.js.

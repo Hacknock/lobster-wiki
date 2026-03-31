@@ -78,7 +78,7 @@ All options are defined in `wiki.config.json`:
 
 | Key               | Description                                                                            | Default          |
 | ----------------- | -------------------------------------------------------------------------------------- | ---------------- |
-| `title`           | Site title (used in header and `<title>`)                                              | —                |
+| `title`           | Site title (used in `<title>`)                                                         | —                |
 | `navigation`      | Path to sidebar navigation Markdown file (required)                                    | —                |
 | `header`          | Path to header Markdown file                                                           | —                |
 | `footer`          | Path to footer Markdown file                                                           | —                |

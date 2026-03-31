@@ -49,14 +49,11 @@ a:hover { text-decoration: underline; }
   height: 100%;
   padding: 0 1.5rem;
 }
-.lbw-logo {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--lbw-color);
-  text-decoration: none;
-  letter-spacing: -0.02em;
-}
-.lbw-logo:hover { text-decoration: none; color: var(--lbw-link); }
+.lbw-header-inner .lbs-paragraph { margin: 0; font-size: 0.85rem; color: var(--lbw-muted); }
+.lbw-header-inner .lbs-image { height: 28px; width: auto; vertical-align: middle; margin-right: 0.4rem; }
+.lbw-header-inner a { color: var(--lbw-color); text-decoration: none; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
+.lbw-header-inner a:hover { color: var(--lbw-link); text-decoration: none; }
+.lbw-header-inner .lbs-strong { font-size: 1.1rem; }
 
 /* ─── Body layout ───────────────────────────────────────────── */
 .lbw-body {

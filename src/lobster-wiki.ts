@@ -7,7 +7,7 @@
 export interface WikiConfig {
   /** Path to sidebar navigation Markdown file */
   navigation: string;
-  /** Site title (used for <title> and header) */
+  /** Site title (used for <title>) */
   title?: string;
   /** Path to header Markdown file */
   header?: string;
@@ -91,16 +91,8 @@ function createShell(config: WikiConfig): ShellElements {
   // Header
   const header = document.createElement("header");
   header.className = "lbw-header";
-  const headerInner = document.createElement("div");
-  headerInner.className = "lbw-header-inner";
-  if (config.title) {
-    const logo = document.createElement("a");
-    logo.className = "lbw-logo";
-    logo.textContent = config.title;
-    logo.href = getPageUrl(config.defaultPage ?? DEFAULT_PAGE, config);
-    headerInner.appendChild(logo);
-  }
-  header.appendChild(headerInner);
+  header.appendChild(document.createElement("div"));
+  header.firstElementChild!.className = "lbw-header-inner";
 
   // Body container
   const body = document.createElement("div");
@@ -355,10 +347,7 @@ export async function initWiki(
 
   // Load header content
   if (config.header) {
-    const headerContent = document.createElement("div");
-    headerContent.className = "lbw-header-content";
-    shell.header.querySelector(".lbw-header-inner")!.appendChild(headerContent);
-    await loadMarkdown(config.header, headerContent);
+    await loadMarkdown(config.header, shell.header.querySelector(".lbw-header-inner")!);
   }
 
   // Load footer content

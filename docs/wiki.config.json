@@ -1,6 +1,7 @@
 {
-  "title": "lobster-wiki",
+  "title": "lobster.js",
   "navigation": "./nav.md",
+  "header": "./header.md",
   "footer": "./footer.md",
   "defaultPage": "intro",
   "tableOfContents": true
