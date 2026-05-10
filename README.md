@@ -62,6 +62,23 @@ Write a minimal `index.html`:
 
 Write your content pages in `content/` and serve with any static file server.
 
+## Installation
+
+### CDN
+
+The latest build is available via GitHub Pages — see the `import` URL in the Quick Start above. Or download `lobster-wiki.js` from the [releases page](https://github.com/Hacknock/lobster-wiki/releases) and host it yourself.
+
+### npm
+
+```sh
+npm install @hacknock/lobster-wiki
+```
+
+```ts
+import { initWiki } from "@hacknock/lobster-wiki";
+initWiki("./wiki.config.json");
+```
+
 ## Features
 
 - **SPA routing** — `?page=slug` query parameters with browser history support
