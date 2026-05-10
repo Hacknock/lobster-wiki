@@ -90,10 +90,12 @@ All options are defined in `wiki.config.json`:
 
 ## Development
 
+This project uses **npm** (declared via `devEngines`; requires `>=11.10.0` for the `min-release-age` setting in `.npmrc`, which blocks installation of package versions less than 7 days old as a supply-chain mitigation).
+
 ```bash
-pnpm install
-pnpm run build       # Build dist/lobster-wiki.js
-pnpm run build:docs  # Build and copy to docs/ for GitHub Pages
+npm ci               # Install dependencies (uses package-lock.json)
+npm run build        # Build dist/lobster-wiki.js
+npm run build:docs   # Build and copy to docs/ for GitHub Pages
 ```
 
 ## License
