@@ -164,16 +164,30 @@ function setupRouter(
     mode === "hash" ? 'a[href*="#page="]' : 'a[href*="?page="]';
 
   document.addEventListener("click", (e) => {
+    if (e.defaultPrevented) return;
+    if (e.button !== 0) return;
+
     const a = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
     if (!a) return;
+
+    const url = new URL(a.href, location.href);
+
+    if (
+      url.origin !== location.origin ||
+      (a.target && a.target !== "_self") ||
+      e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
+    ) {
+      return;
+    }
+
     e.preventDefault();
 
     let page: string | null;
     if (mode === "hash") {
-      const hash = new URL(a.href, location.href).hash.slice(1);
+      const hash = url.hash.slice(1);
       page = new URLSearchParams(hash).get("page");
     } else {
-      page = new URL(a.href, location.href).searchParams.get("page");
+      page = url.searchParams.get("page");
     }
 
     if (!page) return;
