@@ -4,7 +4,7 @@ import { resolve } from "path";
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, "src/lobster-wiki.ts"),
+      entry: resolve(import.meta.dirname, "src/lobster-wiki.ts"),
       name: "LobsterWiki",
       fileName: "lobster-wiki",
       formats: ["es"],
