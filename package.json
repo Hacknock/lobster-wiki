@@ -1,7 +1,7 @@
 {
   "name": "@hacknock/lobster-wiki",
   "version": "0.1.0",
-  "description": "Wiki/multi-page site extension for lobster.js \u2014 Markdown-driven, zero-config",
+  "description": "Wiki/multi-page site extension for lobster.js — Markdown-driven, zero-config",
   "keywords": [
     "lobster",
     "markdown",
@@ -47,8 +47,7 @@
   "devEngines": {
     "packageManager": {
       "name": "npm",
-      "onFail": "error",
-      "version": "12.2.1"
+      "onFail": "error"
     }
   }
 }
