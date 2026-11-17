@@ -109,7 +109,7 @@ All options are defined in `wiki.config.json`:
 
 This project uses **npm** (declared via `devEngines`; requires `>=12.2.1` for the `min-release-age` setting in `.npmrc`, which blocks installation of package versions less than 7 days old as a supply-chain mitigation).
 
-Use Node.js **24.22.1** (`.node-version`) and npm **12.2.1**, matching CI.
+Use Node.js **24.22.3** (`.node-version`) and npm **12.2.1**, matching CI.
 
 ```bash
 nodenv install -s
