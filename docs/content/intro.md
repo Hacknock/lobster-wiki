@@ -17,7 +17,7 @@ Add a single `<script type="module">` to your HTML:
   <body>
     <div id="content"></div>
     <script type="module">
-      import { loadMarkdown } from "https://hacknock.github.io/lobsterjs/lobster.js";
+      import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js";
       loadMarkdown("./content.md", document.getElementById("content"));
     </script>
   </body>

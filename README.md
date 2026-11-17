@@ -103,7 +103,9 @@ All options are defined in `wiki.config.json`:
 | `defaultPage`     | Default page slug when no `?page=` is specified                                        | `intro`          |
 | `tableOfContents` | Enable auto-generated table of contents (`true` or `{ "minLevel": 2, "maxLevel": 4 }`) | `false`          |
 | `routing`         | Routing mode: `query` or `hash`                                                        | `query`          |
-| `lobsterUrl`      | URL to lobster.js                                                                      | GitHub Pages CDN |
+| `lobsterUrl`      | URL to lobster.js                                                                      | jsDelivr `@hacknock/lobster@0.4` |
+
+By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.4` release line, so it receives patch releases only. Set `lobsterUrl` to use a different version or a self-hosted copy.
 
 ## Development
 
