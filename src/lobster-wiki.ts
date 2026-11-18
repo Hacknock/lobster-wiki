@@ -307,6 +307,15 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
   tocNav.appendChild(list);
 }
 
+function renderPageLoadError(container: HTMLElement, page: string): void {
+  const paragraph = document.createElement("p");
+  paragraph.className = "lbs-paragraph";
+  paragraph.textContent = `This page could not be loaded: ${page}`;
+  const message = document.createElement("div");
+  message.className = "lbw-not-found";
+  message.appendChild(paragraph);
+  container.replaceChildren(message);
+}
 
 // ============================================================
 // initWiki — main entry point
@@ -354,12 +363,23 @@ export async function initWiki(
   // Load sidebar navigation
   await loadMarkdown(config.navigation, shell.sidebar);
 
+  let latestPageLoad = 0;
+
   // Page loader
   async function loadPage(page: string): Promise<void> {
+    const pageLoad = ++latestPageLoad;
     const srcs = page
       .split(",")
       .map((p) => `${contentDir}${p.trim()}.md`);
-    await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, shell.main);
+    const content = document.createElement("div");
+    try {
+      await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, content);
+    } catch (error) {
+      console.error(error);
+      renderPageLoadError(content, page);
+    }
+    if (pageLoad !== latestPageLoad) return;
+    shell.main.replaceChildren(...content.childNodes);
 
     updateActiveNav(shell.sidebar, page);
     updateTitle(shell.sidebar, page, config.title);
