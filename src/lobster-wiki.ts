@@ -42,20 +42,20 @@ const DEFAULT_PAGE = "intro";
 // Lobster.js dynamic loader
 // ============================================================
 
-type LoadMarkdownFn = (
+type LoadMarkdownFunction = (
   src: string | string[],
   container: HTMLElement
 ) => Promise<void>;
 
-let _loadMarkdown: LoadMarkdownFn | null = null;
+let cachedLoadMarkdown: LoadMarkdownFunction | null = null;
 
 async function getLobster(
   url: string
-): Promise<{ loadMarkdown: LoadMarkdownFn }> {
-  if (_loadMarkdown) return { loadMarkdown: _loadMarkdown };
-  const mod = await import(/* @vite-ignore */ url);
-  _loadMarkdown = mod.loadMarkdown;
-  return { loadMarkdown: mod.loadMarkdown };
+): Promise<{ loadMarkdown: LoadMarkdownFunction }> {
+  if (cachedLoadMarkdown) return { loadMarkdown: cachedLoadMarkdown };
+  const lobsterModule = await import(/* @vite-ignore */ url);
+  cachedLoadMarkdown = lobsterModule.loadMarkdown;
+  return { loadMarkdown: lobsterModule.loadMarkdown };
 }
 
 // ============================================================
@@ -180,17 +180,17 @@ function setupRouter(
   // Intercept navigation links
   const linkSelector = 'a[href*="?page="]';
 
-  document.addEventListener("click", (e) => {
-    if (e.defaultPrevented) return;
-    if (e.button !== 0) return;
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented) return;
+    if (event.button !== 0) return;
 
-    const link = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
+    const link = (event.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
     if (!link) return;
 
     if (
       (link.target && link.target !== "_self") ||
       link.hasAttribute("download") ||
-      e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
+      event.ctrlKey || event.metaKey || event.altKey || event.shiftKey
     ) {
       return;
     }
@@ -198,7 +198,7 @@ function setupRouter(
     const page = getLinkPage(link);
     if (page === null) return;
 
-    e.preventDefault();
+    event.preventDefault();
     if (!page) return;
 
     history.pushState(null, "", link.search + link.hash);
@@ -251,8 +251,8 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
   const entries: TocEntry[] = [];
   const headings = main.querySelectorAll<HTMLElement>(
     [2, 3, 4, 5, 6]
-      .filter((l) => l >= minLevel && l <= maxLevel)
-      .map((l) => `.lbs-heading-${l}`)
+      .filter((level) => level >= minLevel && level <= maxLevel)
+      .map((level) => `.lbs-heading-${level}`)
       .join(",")
   );
 
@@ -260,19 +260,19 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
     Array.from(document.querySelectorAll("[id]"), (element) => element.id)
   );
 
-  headings.forEach((el) => {
+  headings.forEach((heading) => {
     const level = parseInt(
-      Array.from(el.classList)
-        .find((c) => c.startsWith("lbs-heading-"))
+      Array.from(heading.classList)
+        .find((className) => className.startsWith("lbs-heading-"))
         ?.replace("lbs-heading-", "") ?? "2",
       10
     );
-    const text = el.textContent?.trim() ?? "";
+    const text = heading.textContent?.trim() ?? "";
     // Use existing id or generate one
-    if (!el.id) {
-      el.id = uniqueSlug(text, usedIds);
+    if (!heading.id) {
+      heading.id = uniqueSlug(text, usedIds);
     }
-    entries.push({ level, text, id: el.id });
+    entries.push({ level, text, id: heading.id });
   });
 
   return entries;
@@ -292,21 +292,21 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
   list.className = "lbw-toc-list";
 
   for (const entry of entries) {
-    const li = document.createElement("li");
-    li.className = `lbw-toc-item lbw-toc-level-${entry.level}`;
-    const a = document.createElement("a");
-    a.href = `#${entry.id}`;
-    a.textContent = entry.text;
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
+    const item = document.createElement("li");
+    item.className = `lbw-toc-item lbw-toc-level-${entry.level}`;
+    const link = document.createElement("a");
+    link.href = `#${entry.id}`;
+    link.textContent = entry.text;
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
       const target = document.getElementById(entry.id);
       if (target) {
         target.scrollIntoView({ behavior: "smooth" });
         history.replaceState(null, "", `#${entry.id}`);
       }
     });
-    li.appendChild(a);
-    list.appendChild(li);
+    item.appendChild(link);
+    list.appendChild(item);
   }
 
   tocNav.innerHTML = "";
@@ -375,12 +375,12 @@ export async function initWiki(
   // Page loader
   async function loadPage(page: string): Promise<void> {
     const pageLoad = ++latestPageLoad;
-    const srcs = page
+    const sources = page
       .split(",")
-      .map((p) => `${contentDir}${p.trim()}.md`);
+      .map((pageName) => `${contentDir}${pageName.trim()}.md`);
     const content = document.createElement("div");
     try {
-      await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, content);
+      await loadMarkdown(sources.length === 1 ? sources[0] : sources, content);
     } catch (error) {
       console.error(error);
       renderPageLoadError(content, page);
