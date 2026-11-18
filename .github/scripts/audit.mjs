@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 const allowedAdvisories = new Map([
   [
     "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
-    "picomatch ReDoS via attacker-supplied globs; only reached through vite with globs from our own config, and no patched release exists yet",
+    "picomatch ReDoS via attacker-supplied globs; only reached through vite and vitest with globs from our own config, and no patched release exists yet",
   ],
 ]);
 
