@@ -65,11 +65,11 @@ Write a minimal `index.html`:
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Wiki</title>
-    <link rel="stylesheet" href="https://hacknock.github.io/lobster-wiki/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Hacknock/lobster-wiki@0.2/docs/style.css" />
   </head>
   <body>
     <script type="module">
-      import { initWiki } from "https://hacknock.github.io/lobster-wiki/lobster-wiki.js";
+      import { initWiki } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster-wiki@0.2/dist/lobster-wiki.js";
       initWiki("./wiki.config.json");
     </script>
   </body>
@@ -124,7 +124,17 @@ Then choose **Settings → Pages → Deploy from a branch** and select the branc
 
 ### CDN
 
-The latest build is available via GitHub Pages — see the `import` URL in the Quick Start above. Or download `lobster-wiki.js` from the [releases page](https://github.com/Hacknock/lobster-wiki/releases) and host it yourself.
+The Quick Start loads lobster-wiki from jsDelivr pinned to the `0.2` release line, so it receives patch releases only:
+
+- Script: `https://cdn.jsdelivr.net/npm/@hacknock/lobster-wiki@0.2/dist/lobster-wiki.js`
+- Stylesheet: `https://cdn.jsdelivr.net/gh/Hacknock/lobster-wiki@0.2/docs/style.css`
+
+Replace `0.2` with an exact version such as `0.2.0` to pin it completely.
+
+GitHub Pages also serves `https://hacknock.github.io/lobster-wiki/lobster-wiki.js` and `https://hacknock.github.io/lobster-wiki/style.css`.
+They follow the main branch, so they can change, including breaking changes, before a release.
+
+You can also download `lobster-wiki.js` from the [releases page](https://github.com/Hacknock/lobster-wiki/releases) and host it yourself.
 
 ### npm
 
@@ -165,7 +175,7 @@ By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.5` rele
 
 ## Styling
 
-`https://hacknock.github.io/lobster-wiki/style.css` is the stylesheet of the demo site, including the responsive layout.
+The stylesheet in the Quick Start is `docs/style.css` in this repository, the stylesheet of the demo site, including the responsive layout.
 Use it as is, or copy it and adjust it to make your own theme.
 
 lobster-wiki builds this layout around your content:
