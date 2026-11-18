@@ -158,6 +158,8 @@ function getFragmentTarget(): HTMLElement | null {
 }
 
 function getLinkPage(link: HTMLAnchorElement): string | null {
+  const href = link.getAttribute("href");
+  if (!href || href.startsWith("#")) return null;
   const url = new URL(link.href, location.href);
   if (url.origin !== location.origin || url.pathname !== location.pathname) {
     return null;
@@ -226,9 +228,10 @@ function updateTitle(
   siteTitle: string | undefined
 ): void {
   const first = page.split(",")[0].trim();
-  const titleLink = Array.from(sidebar.querySelectorAll("a")).find(
-    (link) => getLinkPage(link) === first
-  );
+  const sidebarLinks = Array.from(sidebar.querySelectorAll("a"));
+  const titleLink =
+    sidebarLinks.find((link) => getLinkPage(link) === page) ??
+    sidebarLinks.find((link) => getLinkPage(link) === first);
   const label = titleLink?.textContent?.trim();
   document.title = label && siteTitle
     ? `${label} - ${siteTitle}`
