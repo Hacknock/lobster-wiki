@@ -43,7 +43,7 @@ const DEFAULT_PAGE = "intro";
 // ============================================================
 
 type LoadMarkdownFunction = (
-  src: string | string[],
+  source: string | string[],
   container: HTMLElement
 ) => Promise<void>;
 
