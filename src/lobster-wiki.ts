@@ -307,6 +307,15 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
   tocNav.appendChild(list);
 }
 
+function renderPageLoadError(main: HTMLElement, page: string): void {
+  const paragraph = document.createElement("p");
+  paragraph.className = "lbs-paragraph";
+  paragraph.textContent = `This page could not be loaded: ${page}`;
+  const message = document.createElement("div");
+  message.className = "lbw-not-found";
+  message.appendChild(paragraph);
+  main.replaceChildren(message);
+}
 
 // ============================================================
 // initWiki — main entry point
@@ -359,7 +368,12 @@ export async function initWiki(
     const srcs = page
       .split(",")
       .map((p) => `${contentDir}${p.trim()}.md`);
-    await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, shell.main);
+    try {
+      await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, shell.main);
+    } catch (error) {
+      console.error(error);
+      renderPageLoadError(shell.main, page);
+    }
 
     updateActiveNav(shell.sidebar, page);
     updateTitle(shell.sidebar, page, config.title);

@@ -106,6 +106,7 @@ Opening `index.html` directly from disk (`file://`) does not work, because brows
 - Link between pages with `?page=` links, in `nav.md`, `header.md`, `footer.md`, and pages alike.
   These links switch pages without reloading the site.
 - `?page=part-1,part-2` shows `content/part-1.md` and `content/part-2.md` one after another as a single page.
+- If a page cannot be loaded, for example because its file does not exist, the wiki shows a message in its place and logs the error to the browser console.
 - The browser tab title is the label of the matching `nav.md` link followed by `title`, for example `Guide - My Wiki`.
 
 ## Navigation
@@ -184,6 +185,7 @@ lobster-wiki builds this layout around your content:
 | Class | Element |
 | ----- | ------- |
 | `lbw-active` | The sidebar link to the current page |
+| `lbw-not-found` | The message shown in place of a page that cannot be loaded |
 | `lbw-toc-title` | The "On this page" heading of the table of contents |
 | `lbw-toc-list` | The list of table of contents entries |
 | `lbw-toc-item`, `lbw-toc-level-N` | A table of contents entry for a heading of level N |
