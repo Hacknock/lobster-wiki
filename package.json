@@ -1,6 +1,6 @@
 {
   "name": "@hacknock/lobster-wiki",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Wiki/multi-page site extension for lobster.js — Markdown-driven, zero-config",
   "keywords": [
     "lobster",
@@ -16,6 +16,10 @@
     "typescript"
   ],
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hacknock/lobster-wiki.git"
+  },
   "type": "module",
   "main": "./dist/lobster-wiki.js",
   "module": "./dist/lobster-wiki.js",
