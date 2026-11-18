@@ -67,9 +67,19 @@ async function getLobster(
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
+    .replace(/[^\p{L}\p{N}\p{M}\s_-]/gu, "")
     .replace(/\s+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function uniqueSlug(text: string, usedIds: Set<string>): string {
+  const base = slugify(text) || "heading";
+  let candidate = base;
+  for (let suffix = 1; usedIds.has(candidate); suffix++) {
+    candidate = `${base}-${suffix}`;
+  }
+  usedIds.add(candidate);
+  return candidate;
 }
 
 // ============================================================
@@ -273,6 +283,10 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
       .join(",")
   );
 
+  const usedIds = new Set(
+    Array.from(document.querySelectorAll("[id]"), (element) => element.id)
+  );
+
   headings.forEach((el) => {
     const level = parseInt(
       Array.from(el.classList)
@@ -283,7 +297,7 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
     const text = el.textContent?.trim() ?? "";
     // Use existing id or generate one
     if (!el.id) {
-      el.id = slugify(text);
+      el.id = uniqueSlug(text, usedIds);
     }
     entries.push({ level, text, id: el.id });
   });
