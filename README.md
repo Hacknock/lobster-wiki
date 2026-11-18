@@ -61,6 +61,8 @@ Write a minimal `index.html`:
 ```
 
 Write your content pages in `content/` and serve with any static file server.
+Opening `index.html` directly from disk (`file://`) does not work, because browsers block module scripts and file loading on `file://` pages.
+For a local preview, run a static server such as `npx serve` or `python3 -m http.server` in the site folder.
 
 ## Installation
 
@@ -85,7 +87,6 @@ initWiki("./wiki.config.json");
 - **Sidebar navigation** — loaded from a Markdown file (`nav.md`) with active link highlighting
 - **Auto-generated table of contents** — builds an "On this page" section from headings (h2-h4)
 - **Shared header / footer** — specify via `.md` file path in config
-- **Hash routing** — optional `"routing": "hash"` mode for `file://` protocol compatibility
 - **Responsive** — sidebar collapses on mobile, TOC hides on narrow screens
 - **CSS-first** — wiki layout uses `lbw-*` classes; content uses lobster.js `lbs-*` classes
 
@@ -102,7 +103,6 @@ All options are defined in `wiki.config.json`:
 | `contentDir`      | Directory containing page Markdown files                                               | `./content/`     |
 | `defaultPage`     | Default page slug when no `?page=` is specified                                        | `intro`          |
 | `tableOfContents` | Enable auto-generated table of contents (`true` or `{ "minLevel": 2, "maxLevel": 4 }`) | `false`          |
-| `routing`         | Routing mode: `query` or `hash`                                                        | `query`          |
 | `lobsterUrl`      | URL to lobster.js                                                                      | jsDelivr `@hacknock/lobster@0.5` |
 
 By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.5` release line, so it receives patch releases only. Set `lobsterUrl` to use a different version or a self-hosted copy.
