@@ -67,6 +67,7 @@ async function getLobster(
 function slugify(text: string): string {
   return text
     .toLowerCase()
+    .replace(/[\u{FE00}-\u{FE0F}\u{20E3}\u{E0100}-\u{E01EF}]/gu, "")
     .replace(/[^\p{L}\p{N}\p{M}\s_-]/gu, "")
     .replace(/\s+/g, "-")
     .replace(/^-+|-+$/g, "");
