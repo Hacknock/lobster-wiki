@@ -182,25 +182,24 @@ function setupRouter(
     if (e.defaultPrevented) return;
     if (e.button !== 0) return;
 
-    const a = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
-    if (!a) return;
+    const link = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
+    if (!link) return;
 
     if (
-      (a.target && a.target !== "_self") ||
-      a.hasAttribute("download") ||
+      (link.target && link.target !== "_self") ||
+      link.hasAttribute("download") ||
       e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
     ) {
       return;
     }
 
-    const page = getLinkPage(a);
+    const page = getLinkPage(link);
     if (page === null) return;
 
     e.preventDefault();
     if (!page) return;
 
-    const url = new URL(a.href, location.href);
-    history.pushState(null, "", url.search + url.hash);
+    history.pushState(null, "", link.search + link.hash);
     navigate(page);
   });
 
@@ -227,10 +226,10 @@ function updateTitle(
   siteTitle: string | undefined
 ): void {
   const first = page.split(",")[0].trim();
-  const link = Array.from(sidebar.querySelectorAll("a")).find(
+  const titleLink = Array.from(sidebar.querySelectorAll("a")).find(
     (link) => getLinkPage(link) === first
   );
-  const label = link?.textContent?.trim();
+  const label = titleLink?.textContent?.trim();
   document.title = label && siteTitle
     ? `${label} - ${siteTitle}`
     : label ?? siteTitle ?? "";
