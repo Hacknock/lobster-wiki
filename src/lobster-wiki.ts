@@ -209,10 +209,13 @@ function setupRouter(
 // WikiNav — sidebar navigation
 // ============================================================
 
+function getLinkPage(link: HTMLAnchorElement): string | null {
+  return new URL(link.href, location.href).searchParams.get("page");
+}
+
 function updateActiveNav(sidebar: HTMLElement, page: string): void {
   sidebar.querySelectorAll("a").forEach((a) => {
-    const linkPage = new URL(a.href, location.href).searchParams.get("page");
-    a.classList.toggle("lbw-active", linkPage === page);
+    a.classList.toggle("lbw-active", getLinkPage(a) === page);
   });
 }
 
@@ -222,9 +225,9 @@ function updateTitle(
   siteTitle: string | undefined
 ): void {
   const first = page.split(",")[0];
-  const link = sidebar.querySelector(
-    `a[href*="page=${first}"]`
-  ) as HTMLAnchorElement | null;
+  const link = Array.from(sidebar.querySelectorAll("a")).find(
+    (a) => getLinkPage(a) === first
+  );
   const label = link?.textContent?.trim();
   document.title = label && siteTitle
     ? `${label} - ${siteTitle}`
