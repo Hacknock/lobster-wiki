@@ -174,7 +174,9 @@ function setupRouter(
 
     if (
       url.origin !== location.origin ||
+      url.pathname !== location.pathname ||
       (a.target && a.target !== "_self") ||
+      a.hasAttribute("download") ||
       e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
     ) {
       return;
