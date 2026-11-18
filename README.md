@@ -202,6 +202,8 @@ Use Node.js **24.22.3** (`.node-version`) and npm **12.2.1**, matching CI.
 nodenv install -s
 npm install -g npm@12.2.1
 npm ci               # Install dependencies (uses package-lock.json)
+npm test             # Type-check and run the tests (Vitest with happy-dom)
+npm run test:watch   # Run the tests in watch mode
 npm run build        # Build dist/lobster-wiki.js
 npm run build:docs   # Build and copy to docs/ for GitHub Pages
 ```

@@ -34,11 +34,15 @@
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
     "build:docs": "vite build && cp dist/lobster-wiki.js docs/lobster-wiki.js",
-    "dev": "vite build --watch"
+    "dev": "vite build --watch",
+    "test": "tsc -p tsconfig.test.json && vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
+    "happy-dom": "^21.0.4",
     "typescript": "^6.0.0",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": ">=24.22.3",
