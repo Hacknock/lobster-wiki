@@ -165,7 +165,7 @@ function setupRouter(
     const page = url.searchParams.get("page");
     if (!page) return;
 
-    history.pushState(null, "", `?page=${page}`);
+    history.pushState(null, "", url.search);
     onNavigate(page);
   });
 
