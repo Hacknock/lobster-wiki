@@ -145,10 +145,26 @@ function getCurrentPage(config: WikiConfig): string {
   return new URLSearchParams(location.search).get("page") ?? defaultPage;
 }
 
+function getFragmentTarget(): HTMLElement | null {
+  const fragment = location.hash.slice(1);
+  if (!fragment) return null;
+  try {
+    return document.getElementById(decodeURIComponent(fragment));
+  } catch {
+    return document.getElementById(fragment);
+  }
+}
+
 function setupRouter(
   config: WikiConfig,
   onNavigate: (page: string) => void
 ): void {
+  let currentPage = getCurrentPage(config);
+  const navigate = (page: string) => {
+    currentPage = page;
+    onNavigate(page);
+  };
+
   // Intercept navigation links
   const linkSelector = 'a[href*="?page="]';
 
@@ -177,12 +193,13 @@ function setupRouter(
     if (!page) return;
 
     history.pushState(null, "", url.search);
-    onNavigate(page);
+    navigate(page);
   });
 
   // Browser back/forward
   window.addEventListener("popstate", () => {
-    onNavigate(getCurrentPage(config));
+    const page = getCurrentPage(config);
+    if (page !== currentPage) navigate(page);
   });
 }
 
@@ -344,12 +361,18 @@ export async function initWiki(
 
     updateActiveNav(shell.sidebar, page);
     updateTitle(shell.sidebar, page, config.title);
-    window.scrollTo(0, 0);
 
     // Build TOC after content is rendered
     if (config.tableOfContents) {
       const entries = buildToc(shell.main, config);
       renderToc(shell.toc, entries);
+    }
+
+    const fragmentTarget = getFragmentTarget();
+    if (fragmentTarget) {
+      fragmentTarget.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
     }
   }
 
