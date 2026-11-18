@@ -157,6 +157,16 @@ function getFragmentTarget(): HTMLElement | null {
   }
 }
 
+function getLinkPage(link: HTMLAnchorElement): string | null {
+  const href = link.getAttribute("href");
+  if (!href || href.startsWith("#")) return null;
+  const url = new URL(link.href, location.href);
+  if (url.origin !== location.origin || url.pathname !== location.pathname) {
+    return null;
+  }
+  return url.searchParams.get("page");
+}
+
 function setupRouter(
   config: WikiConfig,
   onNavigate: (page: string) => void
@@ -174,27 +184,24 @@ function setupRouter(
     if (e.defaultPrevented) return;
     if (e.button !== 0) return;
 
-    const a = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
-    if (!a) return;
-
-    const url = new URL(a.href, location.href);
+    const link = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
+    if (!link) return;
 
     if (
-      url.origin !== location.origin ||
-      url.pathname !== location.pathname ||
-      (a.target && a.target !== "_self") ||
-      a.hasAttribute("download") ||
+      (link.target && link.target !== "_self") ||
+      link.hasAttribute("download") ||
       e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
     ) {
       return;
     }
 
-    e.preventDefault();
+    const page = getLinkPage(link);
+    if (page === null) return;
 
-    const page = url.searchParams.get("page");
+    e.preventDefault();
     if (!page) return;
 
-    history.pushState(null, "", url.search + url.hash);
+    history.pushState(null, "", link.search + link.hash);
     navigate(page);
   });
 
@@ -210,9 +217,8 @@ function setupRouter(
 // ============================================================
 
 function updateActiveNav(sidebar: HTMLElement, page: string): void {
-  sidebar.querySelectorAll("a").forEach((a) => {
-    const linkPage = new URL(a.href, location.href).searchParams.get("page");
-    a.classList.toggle("lbw-active", linkPage === page);
+  sidebar.querySelectorAll("a").forEach((link) => {
+    link.classList.toggle("lbw-active", getLinkPage(link) === page);
   });
 }
 
@@ -221,11 +227,12 @@ function updateTitle(
   page: string,
   siteTitle: string | undefined
 ): void {
-  const first = page.split(",")[0];
-  const link = sidebar.querySelector(
-    `a[href*="page=${first}"]`
-  ) as HTMLAnchorElement | null;
-  const label = link?.textContent?.trim();
+  const first = page.split(",")[0].trim();
+  const sidebarLinks = Array.from(sidebar.querySelectorAll("a"));
+  const titleLink =
+    sidebarLinks.find((link) => getLinkPage(link) === page) ??
+    sidebarLinks.find((link) => getLinkPage(link) === first);
+  const label = titleLink?.textContent?.trim();
   document.title = label && siteTitle
     ? `${label} - ${siteTitle}`
     : label ?? siteTitle ?? "";
