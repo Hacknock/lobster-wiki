@@ -116,7 +116,8 @@ A nested list is the usual layout: list items without links act as group labels,
 ## Publishing
 
 lobster-wiki is a set of static files, so any static hosting works.
-For GitHub Pages, push the folder to a repository, then choose **Settings → Pages → Deploy from a branch** and select the branch and folder that contain `index.html`.
+For GitHub Pages, put the contents of the site folder (`index.html`, `wiki.config.json`, and the rest) at the root of a repository or in its `docs/` folder, because those are the only folders GitHub Pages can publish from a branch.
+Then choose **Settings → Pages → Deploy from a branch** and select the branch and that folder (`/ (root)` or `/docs`).
 
 ## Installation
 
