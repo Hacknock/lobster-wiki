@@ -148,10 +148,12 @@ function getCurrentPage(config: WikiConfig): string {
 function getFragmentTarget(): HTMLElement | null {
   const fragment = location.hash.slice(1);
   if (!fragment) return null;
+  const target = document.getElementById(fragment);
+  if (target) return target;
   try {
     return document.getElementById(decodeURIComponent(fragment));
   } catch {
-    return document.getElementById(fragment);
+    return null;
   }
 }
 
@@ -192,7 +194,7 @@ function setupRouter(
     const page = url.searchParams.get("page");
     if (!page) return;
 
-    history.pushState(null, "", url.search);
+    history.pushState(null, "", url.search + url.hash);
     navigate(page);
   });
 
