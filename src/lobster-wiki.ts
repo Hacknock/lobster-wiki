@@ -19,8 +19,6 @@ export interface WikiConfig {
   defaultPage?: string;
   /** Table of contents configuration (default: false) */
   tableOfContents?: boolean | { minLevel?: number; maxLevel?: number };
-  /** Routing mode: "query" uses ?page=, "hash" uses #page= (default: "query") */
-  routing?: "query" | "hash";
   /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js") */
   lobsterUrl?: string;
 }
@@ -131,25 +129,8 @@ function createShell(config: WikiConfig): ShellElements {
 // WikiRouter — SPA routing
 // ============================================================
 
-function getRoutingMode(config: WikiConfig): "query" | "hash" {
-  return config.routing ?? "query";
-}
-
-function getPageUrl(page: string, config: WikiConfig): string {
-  if (getRoutingMode(config) === "hash") {
-    return `#page=${page}`;
-  }
-  return `?page=${page}`;
-}
-
 function getCurrentPage(config: WikiConfig): string {
-  const mode = getRoutingMode(config);
   const defaultPage = config.defaultPage ?? DEFAULT_PAGE;
-  if (mode === "hash") {
-    const hash = location.hash.slice(1); // remove #
-    const params = new URLSearchParams(hash);
-    return params.get("page") ?? defaultPage;
-  }
   return new URLSearchParams(location.search).get("page") ?? defaultPage;
 }
 
@@ -157,11 +138,8 @@ function setupRouter(
   config: WikiConfig,
   onNavigate: (page: string) => void
 ): void {
-  const mode = getRoutingMode(config);
-
   // Intercept navigation links
-  const linkSelector =
-    mode === "hash" ? 'a[href*="#page="]' : 'a[href*="?page="]';
+  const linkSelector = 'a[href*="?page="]';
 
   document.addEventListener("click", (e) => {
     if (e.defaultPrevented) return;
@@ -184,58 +162,26 @@ function setupRouter(
 
     e.preventDefault();
 
-    let page: string | null;
-    if (mode === "hash") {
-      const hash = url.hash.slice(1);
-      page = new URLSearchParams(hash).get("page");
-    } else {
-      page = url.searchParams.get("page");
-    }
-
+    const page = url.searchParams.get("page");
     if (!page) return;
 
-    if (mode === "hash") {
-      location.hash = `page=${page}`;
-    } else {
-      history.pushState({ page }, "", `?page=${page}`);
-    }
+    history.pushState(null, "", url.search);
     onNavigate(page);
   });
 
   // Browser back/forward
-  if (mode === "hash") {
-    window.addEventListener("hashchange", () => {
-      onNavigate(getCurrentPage(config));
-    });
-  } else {
-    window.addEventListener("popstate", (e) => {
-      const page =
-        (e.state as { page?: string })?.page ??
-        config.defaultPage ??
-        DEFAULT_PAGE;
-      onNavigate(page);
-    });
-  }
+  window.addEventListener("popstate", () => {
+    onNavigate(getCurrentPage(config));
+  });
 }
 
 // ============================================================
 // WikiNav — sidebar navigation
 // ============================================================
 
-function updateActiveNav(
-  sidebar: HTMLElement,
-  page: string,
-  config: WikiConfig
-): void {
-  const mode = getRoutingMode(config);
+function updateActiveNav(sidebar: HTMLElement, page: string): void {
   sidebar.querySelectorAll("a").forEach((a) => {
-    let linkPage: string | null;
-    if (mode === "hash") {
-      const hash = new URL(a.href, location.href).hash.slice(1);
-      linkPage = new URLSearchParams(hash).get("page");
-    } else {
-      linkPage = new URL(a.href, location.href).searchParams.get("page");
-    }
+    const linkPage = new URL(a.href, location.href).searchParams.get("page");
     a.classList.toggle("lbw-active", linkPage === page);
   });
 }
@@ -381,7 +327,7 @@ export async function initWiki(
       .map((p) => `${contentDir}${p.trim()}.md`);
     await loadMarkdown(srcs.length === 1 ? srcs[0] : srcs, shell.main);
 
-    updateActiveNav(shell.sidebar, page, config);
+    updateActiveNav(shell.sidebar, page);
     updateTitle(shell.sidebar, page, config.title);
     window.scrollTo(0, 0);
 
