@@ -157,6 +157,14 @@ function getFragmentTarget(): HTMLElement | null {
   }
 }
 
+function getLinkPage(link: HTMLAnchorElement): string | null {
+  const url = new URL(link.href, location.href);
+  if (url.origin !== location.origin || url.pathname !== location.pathname) {
+    return null;
+  }
+  return url.searchParams.get("page");
+}
+
 function setupRouter(
   config: WikiConfig,
   onNavigate: (page: string) => void
@@ -177,11 +185,7 @@ function setupRouter(
     const a = (e.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
     if (!a) return;
 
-    const url = new URL(a.href, location.href);
-
     if (
-      url.origin !== location.origin ||
-      url.pathname !== location.pathname ||
       (a.target && a.target !== "_self") ||
       a.hasAttribute("download") ||
       e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
@@ -189,11 +193,13 @@ function setupRouter(
       return;
     }
 
-    e.preventDefault();
+    const page = getLinkPage(a);
+    if (page === null) return;
 
-    const page = url.searchParams.get("page");
+    e.preventDefault();
     if (!page) return;
 
+    const url = new URL(a.href, location.href);
     history.pushState(null, "", url.search + url.hash);
     navigate(page);
   });
@@ -208,10 +214,6 @@ function setupRouter(
 // ============================================================
 // WikiNav — sidebar navigation
 // ============================================================
-
-function getLinkPage(link: HTMLAnchorElement): string | null {
-  return new URL(link.href, location.href).searchParams.get("page");
-}
 
 function updateActiveNav(sidebar: HTMLElement, page: string): void {
   sidebar.querySelectorAll("a").forEach((link) => {
