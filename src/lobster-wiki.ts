@@ -214,8 +214,8 @@ function getLinkPage(link: HTMLAnchorElement): string | null {
 }
 
 function updateActiveNav(sidebar: HTMLElement, page: string): void {
-  sidebar.querySelectorAll("a").forEach((a) => {
-    a.classList.toggle("lbw-active", getLinkPage(a) === page);
+  sidebar.querySelectorAll("a").forEach((link) => {
+    link.classList.toggle("lbw-active", getLinkPage(link) === page);
   });
 }
 
@@ -224,9 +224,9 @@ function updateTitle(
   page: string,
   siteTitle: string | undefined
 ): void {
-  const first = page.split(",")[0];
+  const first = page.split(",")[0].trim();
   const link = Array.from(sidebar.querySelectorAll("a")).find(
-    (a) => getLinkPage(a) === first
+    (link) => getLinkPage(link) === first
   );
   const label = link?.textContent?.trim();
   document.title = label && siteTitle
