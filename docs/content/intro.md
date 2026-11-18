@@ -17,7 +17,7 @@ Add a single `<script type="module">` to your HTML:
   <body>
     <div id="content"></div>
     <script type="module">
-      import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js";
+      import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
       loadMarkdown("./content.md", document.getElementById("content"));
     </script>
   </body>
@@ -69,7 +69,7 @@ lobster.js adds the following on top of standard Markdown:
 - **`:::details`** — native `<details>` / `<summary>` collapsible blocks
 - **`:::warp`** — define content once, place it anywhere (multi-column layouts)
 - **Silent tables** (`~ | … |`) — borderless layout grids
-- **Cell merging** — horizontal (`\|`) and vertical (`\---`) spans
+- **Cell merging** — horizontal (`<<`) and vertical (`^^`) spans
 - **Image sizing** — `![alt](url =800x)`
 - **Footnotes** — reference (`[^id]`) and inline (`^[text]`)
 

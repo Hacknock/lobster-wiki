@@ -21,7 +21,7 @@ export interface WikiConfig {
   tableOfContents?: boolean | { minLevel?: number; maxLevel?: number };
   /** Routing mode: "query" uses ?page=, "hash" uses #page= (default: "query") */
   routing?: "query" | "hash";
-  /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js") */
+  /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js") */
   lobsterUrl?: string;
 }
 
@@ -36,7 +36,7 @@ interface TocEntry {
 // ============================================================
 
 const DEFAULT_LOBSTER_URL =
-  "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js";
+  "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
 const DEFAULT_CONTENT_DIR = "./content/";
 const DEFAULT_PAGE = "intro";
 
