@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { deferred, lobsterStubUrl, sidebar, siteOrigin, startWiki } from "./support/wiki-harness";
 
 const files = {
@@ -9,11 +9,6 @@ const files = {
 
 const heading = (wiki: Awaited<ReturnType<typeof startWiki>>) =>
   wiki.main().querySelector(".lbs-heading-1")?.textContent;
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-  vi.restoreAllMocks();
-});
 
 describe("initial page", () => {
   test("loads the default page when no page is requested", async () => {
@@ -72,7 +67,7 @@ describe("link clicks", () => {
     expect(wiki.click("#to-guide")).toBe(true);
     await vi.waitFor(() => expect(heading(wiki)).toBe("Guide"));
     expect(wiki.url()).toBe("?page=guide#setup");
-    expect(wiki.scrollIntoView.mock.contexts.at(-1)).toBe(wiki.document.getElementById("setup"));
+    expect(wiki.lastScrolledElement()).toBe(wiki.document.getElementById("setup"));
   });
 
   test.each([
@@ -105,12 +100,16 @@ describe("link clicks", () => {
     expect(wiki.url()).toBe("");
   });
 
-  test("leaves fragment-only links to the browser", async () => {
+  test("leaves a link with a page parameter only in its fragment to the browser", async () => {
     const wiki = await startWiki({
-      files: { ...files, "content/intro.md": '<a id="note-link" href="#note">Note</a><p id="note">Note</p>' },
+      files: { ...files, "content/intro.md": '<a id="note-link" href="#note?page=guide">Note</a>' },
+      search: "?page=intro",
     });
     await wiki.started;
+    const requestCount = wiki.requests.length;
     expect(wiki.click("#note-link")).toBe(false);
+    expect(wiki.url()).toBe("?page=intro");
+    expect(wiki.requests.length).toBe(requestCount);
   });
 });
 
@@ -132,7 +131,6 @@ describe("history", () => {
     const requestCount = wiki.requests.length;
     wiki.window.history.pushState(null, "", "?page=guide#setup");
     wiki.window.dispatchEvent(new wiki.window.PopStateEvent("popstate"));
-    await new Promise((resolve) => setTimeout(resolve, 10));
     expect(wiki.requests.length).toBe(requestCount);
   });
 });
@@ -141,7 +139,7 @@ describe("fragments on load", () => {
   test("scrolls to the fragment target", async () => {
     const wiki = await startWiki({ files, search: "?page=guide#setup" });
     await wiki.started;
-    expect(wiki.scrollIntoView.mock.contexts.at(-1)).toBe(wiki.document.getElementById("setup"));
+    expect(wiki.lastScrolledElement()).toBe(wiki.document.getElementById("setup"));
     expect(wiki.scrollTo).not.toHaveBeenCalled();
   });
 
@@ -151,7 +149,7 @@ describe("fragments on load", () => {
       search: `?page=guide#${encodeURIComponent("設定")}`,
     });
     await wiki.started;
-    expect(wiki.scrollIntoView.mock.contexts.at(-1)).toBe(wiki.document.getElementById("設定"));
+    expect(wiki.lastScrolledElement()).toBe(wiki.document.getElementById("設定"));
   });
 
   test.each([
@@ -173,6 +171,7 @@ describe("overlapping navigations", () => {
   ])("keeps the newer page when an older load %s later", async (_case, slowBody) => {
     const slowPage = deferred<string | null>();
     const wiki = await startWiki({
+      expectConsoleErrors: slowBody === null,
       files: {
         ...files,
         "nav.md": sidebar({ Introduction: "?page=intro", Guide: "?page=guide", Slow: "?page=slow" }),
@@ -184,11 +183,24 @@ describe("overlapping navigations", () => {
     wiki.click('.lbw-sidebar a[href="?page=guide"]');
     await vi.waitFor(() => expect(heading(wiki)).toBe("Guide"));
     slowPage.resolve(slowBody);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await wiki.pageLoadSettled("./content/slow.md");
     expect(heading(wiki)).toBe("Guide");
     expect(wiki.main().querySelector(".lbw-not-found")).toBeNull();
     expect(wiki.activeLabels()).toEqual(["Guide"]);
     expect(wiki.url()).toBe("?page=guide");
+  });
+});
+
+describe("header and footer", () => {
+  test("are rendered into their own regions", async () => {
+    const wiki = await startWiki({
+      files: { ...files, "header.md": "<p>Header text</p>", "footer.md": "<p>Footer text</p>" },
+      config: { header: "./header.md", footer: "./footer.md" },
+    });
+    await wiki.started;
+    expect(wiki.document.querySelector(".lbw-header > .lbw-header-inner")?.textContent).toBe("Header text");
+    expect(wiki.document.querySelector(".lbw-footer")?.textContent).toBe("Footer text");
+    expect(heading(wiki)).toBe("Introduction");
   });
 });
 

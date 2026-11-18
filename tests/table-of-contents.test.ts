@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import type { WikiConfig } from "../src/lobster-wiki";
 import { sidebar, startWiki } from "./support/wiki-harness";
 
@@ -25,11 +25,6 @@ async function openPage(page: string, tableOfContents: WikiConfig["tableOfConten
     }));
   return { ...wiki, entries };
 }
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-  vi.restoreAllMocks();
-});
 
 describe("configuration", () => {
   test("is not added when disabled", async () => {
@@ -93,6 +88,6 @@ describe("heading ids", () => {
 test("clicking an entry scrolls to the heading and updates the fragment", async () => {
   const wiki = await openPage(headings([2, "Setup"]));
   wiki.click('.lbw-toc-item a[href="#setup"]');
-  expect(wiki.scrollIntoView.mock.contexts.at(-1)).toBe(wiki.document.getElementById("setup"));
+  expect(wiki.lastScrolledElement()).toBe(wiki.document.getElementById("setup"));
   expect(wiki.url()).toBe("#setup");
 });

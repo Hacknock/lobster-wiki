@@ -1,6 +1,7 @@
 import { Window } from "happy-dom";
-import { vi } from "vitest";
+import { expect, onTestFinished, vi } from "vitest";
 import type { WikiConfig } from "../../src/lobster-wiki";
+import { settledEventName } from "./lobster-stub";
 
 export const siteOrigin = "https://wiki.example";
 export const sitePath = "/docs/index.html";
@@ -13,6 +14,7 @@ export interface StartWikiOptions {
   files: Record<string, WikiFile>;
   search?: string;
   config?: Partial<WikiConfig> | string;
+  expectConsoleErrors?: boolean;
 }
 
 export interface ClickOptions {
@@ -38,6 +40,10 @@ export function sidebar(links: Record<string, string>): string {
   return Object.entries(links)
     .map(([label, href]) => `<a href="${href}">${label}</a>`)
     .join("");
+}
+
+function nextTask(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 export async function startWiki(options: StartWikiOptions) {
@@ -68,10 +74,20 @@ export async function startWiki(options: StartWikiOptions) {
   const scrollTo = vi.spyOn(window, "scrollTo");
   const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
+  onTestFinished(async () => {
+    if (!options.expectConsoleErrors) expect(consoleError).not.toHaveBeenCalled();
+    await window.happyDOM.close();
+  });
+
   const interceptedClicks: boolean[] = [];
   window.addEventListener("click", (event) => {
     interceptedClicks.push(event.defaultPrevented);
     event.preventDefault();
+  });
+
+  const settledSources: string[][] = [];
+  window.addEventListener(settledEventName, (event) => {
+    settledSources.push((event as unknown as CustomEvent<string[]>).detail);
   });
 
   vi.resetModules();
@@ -101,15 +117,24 @@ export async function startWiki(options: StartWikiOptions) {
     return interceptedClicks[interceptedClicks.length - 1];
   };
 
+  const pageLoadSettled = async (path: string): Promise<void> => {
+    await vi.waitFor(() => {
+      expect(settledSources.some((sources) => sources.includes(path))).toBe(true);
+    });
+    await nextTask();
+  };
+
   return {
     window,
     document,
     requests,
     started,
     click,
+    pageLoadSettled,
     scrollIntoView,
     scrollTo,
     consoleError,
+    lastScrolledElement: () => scrollIntoView.mock.contexts[scrollIntoView.mock.contexts.length - 1],
     main: () => document.querySelector(".lbw-main")!,
     url: () => `${window.location.search}${window.location.hash}`,
     activeLabels: () =>

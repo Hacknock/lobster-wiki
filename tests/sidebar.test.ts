@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { sidebar, siteOrigin, startWiki } from "./support/wiki-harness";
 
 const pages = ["intro", "example", "example-table", "日本語", "part-1", "part-2", 'a"b'];
@@ -13,11 +13,6 @@ async function openPage(search: string, links: Record<string, string>, siteTitle
   await wiki.started;
   return wiki;
 }
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-  vi.restoreAllMocks();
-});
 
 describe("tab title", () => {
   test("joins the link label and the site title", async () => {
