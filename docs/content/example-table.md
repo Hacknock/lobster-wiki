@@ -42,10 +42,12 @@ Use `:---`, `:---:`, and `---:` in the separator row:
 
 ### Horizontal merge
 
-Append `\|` to a cell's content to extend it one column to the right. Works in **header rows** and **body rows** alike. The slot immediately after the `\|` cell is consumed by the merge:
+Write `<<` as a cell to merge it into the cell on its left.
+Repeat `<<` to span more columns.
+Works in **header rows** and **body rows** alike:
 
 ```markdown
-| Product | EMEA \|  | APAC \| |
+| Product | EMEA  | <<   | APAC  | <<   |
 | :------ | ---:  | ---: | ---:  | ---: |
 |         | Q1    | Q2   | Q1    | Q2   |
 | Alpha   | 100   | 120  | 80    | 90   |
@@ -54,7 +56,7 @@ Append `\|` to a cell's content to extend it one column to the right. Works in *
 
 **Result:**
 
-| Product | EMEA \|  | APAC \| |
+| Product | EMEA  | <<   | APAC  | <<   |
 | :------ | ---:  | ---: | ---:  | ---: |
 |         | Q1    | Q2   | Q1    | Q2   |
 | Alpha   | 100   | 120  | 80    | 90   |
@@ -66,8 +68,8 @@ Body-row-only example:
 | Feature     | lobster.js | Standard MD |
 | :---------- | :--------: | :---------: |
 | Tables      | ✓          | ✓           |
-| Cell merge  | ✓ only \|  |
-| Warp blocks | ✓ only \|  |
+| Cell merge  | ✓ only     | <<          |
+| Warp blocks | ✓ only     | <<          |
 ```
 
 **Result:**
@@ -75,18 +77,18 @@ Body-row-only example:
 | Feature     | lobster.js | Standard MD |
 | :---------- | :--------: | :---------: |
 | Tables      | ✓          | ✓           |
-| Cell merge  | ✓ only \|  |
-| Warp blocks | ✓ only \|  |
+| Cell merge  | ✓ only     | <<          |
+| Warp blocks | ✓ only     | <<          |
 
 ### Vertical merge
 
-Write `\---` in a cell to merge it with the cell above:
+Write `^^` as a cell to merge it into the cell above:
 
 ```markdown
 | Browser | Engine    |
 | :------ | :-------- |
 | Chrome  | Blink     |
-| Edge    | \---      |
+| Edge    | ^^        |
 | Firefox | Gecko     |
 | Safari  | WebKit    |
 ```
@@ -96,7 +98,7 @@ Write `\---` in a cell to merge it with the cell above:
 | Browser | Engine |
 | :------ | :----- |
 | Chrome  | Blink  |
-| Edge    | \---   |
+| Edge    | ^^     |
 | Firefox | Gecko  |
 | Safari  | WebKit |
 
@@ -106,7 +108,7 @@ Write `\---` in a cell to merge it with the cell above:
 | Region  | Q1     | Q2   |
 | :------ | :---   | :--- |
 | Europe  | 120    | 150  |
-| \---    | 130 \| |
+| ^^      | 130    | <<   |
 | Asia    | 200    | 180  |
 ```
 
@@ -115,8 +117,11 @@ Write `\---` in a cell to merge it with the cell above:
 | Region  | Q1     | Q2   |
 | :------ | :---   | :--- |
 | Europe  | 120    | 150  |
-| \---    | 130 \| |
+| ^^      | 130    | <<   |
 | Asia    | 200    | 180  |
+
+A marker merges only when it is the whole cell, and the merged area must be a rectangle.
+Write `\<<` or `\^^` for a literal `<<` or `^^`, and `\|` for a literal `|` inside a cell.
 
 ## Silent table (layout grid)
 

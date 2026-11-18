@@ -20,7 +20,7 @@ Use triple backticks. Add a language identifier for syntax highlighting:
 
 ````markdown
 ```js
-import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js";
+import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
 
 loadMarkdown("./content.md", document.getElementById("content"));
 ```
@@ -29,7 +29,7 @@ loadMarkdown("./content.md", document.getElementById("content"));
 **Result:**
 
 ```js
-import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.4/dist/lobster.js";
+import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
 
 loadMarkdown("./content.md", document.getElementById("content"));
 ```
