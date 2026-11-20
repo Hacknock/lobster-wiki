@@ -87,4 +87,4 @@ Every element gets an `lbs-*` class. See the [Introduction](?page=intro) for the
 </details>
 ```
 
-The `open` attribute works as expected — browsers remember the state and screen readers announce it correctly.
+The toggle is the browser's native `<details>` behavior, so it works with the keyboard and screen readers without any script.

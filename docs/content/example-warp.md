@@ -17,7 +17,7 @@ See it here:
 [~my-block]
 ```
 
-The warp block itself is hidden. Only the reference renders the content.
+The warp block renders nothing where it is defined; only the reference shows its content.
 
 ## Two-column layout
 
