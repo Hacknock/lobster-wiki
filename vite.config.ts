@@ -11,9 +11,5 @@ export default defineConfig({
     },
     outDir: "dist",
     minify: true,
-    rollupOptions: {
-      // lobster.js is loaded dynamically at runtime — do not bundle it
-      external: [],
-    },
   },
 });

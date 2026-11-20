@@ -1,9 +1,3 @@
-// lobster-wiki.ts — Wiki/multi-page extension for lobster.js
-
-// ============================================================
-// Types
-// ============================================================
-
 export interface WikiConfig {
   /** Path to sidebar navigation Markdown file */
   navigation: string;
@@ -17,7 +11,7 @@ export interface WikiConfig {
   contentDir?: string;
   /** Default page slug when no ?page= is specified (default: "intro") */
   defaultPage?: string;
-  /** Table of contents configuration (default: false) */
+  /** Table of contents configuration; levels are 1 to 6 (default: false, or levels 2 to 4 when enabled) */
   tableOfContents?: boolean | { minLevel?: number; maxLevel?: number };
   /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js") */
   lobsterUrl?: string;
@@ -30,38 +24,20 @@ interface TocEntry {
   id: string;
 }
 
-// ============================================================
-// Constants
-// ============================================================
-
 const DEFAULT_LOBSTER_URL =
   "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
 const DEFAULT_CONTENT_DIR = "./content/";
 const DEFAULT_PAGE = "intro";
-
-// ============================================================
-// Lobster.js dynamic loader
-// ============================================================
 
 type LoadMarkdownFunction = (
   source: string | string[],
   container: HTMLElement
 ) => Promise<void>;
 
-let cachedLoadMarkdown: LoadMarkdownFunction | null = null;
-
-async function getLobster(
-  url: string
-): Promise<{ loadMarkdown: LoadMarkdownFunction }> {
-  if (cachedLoadMarkdown) return { loadMarkdown: cachedLoadMarkdown };
+async function importLoadMarkdown(url: string): Promise<LoadMarkdownFunction> {
   const lobsterModule = await import(/* @vite-ignore */ url);
-  cachedLoadMarkdown = lobsterModule.loadMarkdown;
-  return { loadMarkdown: lobsterModule.loadMarkdown };
+  return lobsterModule.loadMarkdown;
 }
-
-// ============================================================
-// Slugify helper
-// ============================================================
 
 function slugify(text: string): string {
   return text
@@ -82,64 +58,44 @@ function uniqueSlug(text: string, usedIds: Set<string>): string {
   return candidate;
 }
 
-// ============================================================
-// WikiShell — DOM scaffold
-// ============================================================
-
 interface ShellElements {
-  header: HTMLElement;
+  headerInner: HTMLElement;
   sidebar: HTMLElement;
   main: HTMLElement;
   toc: HTMLElement;
   footer: HTMLElement;
 }
 
-function createShell(config: WikiConfig): ShellElements {
-  // Clear body
-  document.body.innerHTML = "";
-
-  // Header
-  const header = document.createElement("header");
-  header.className = "lbw-header";
-  header.appendChild(document.createElement("div"));
-  header.firstElementChild!.className = "lbw-header-inner";
-
-  // Body container
-  const body = document.createElement("div");
-  body.className = "lbw-body";
-
-  // Sidebar
-  const sidebar = document.createElement("nav");
-  sidebar.className = "lbw-sidebar";
-
-  // Main
-  const main = document.createElement("main");
-  main.className = "lbw-main";
-
-  // TOC
-  const toc = document.createElement("nav");
-  toc.className = "lbw-toc";
-
-  body.appendChild(sidebar);
-  body.appendChild(main);
-  if (config.tableOfContents) {
-    body.appendChild(toc);
-  }
-
-  // Footer
-  const footer = document.createElement("footer");
-  footer.className = "lbw-footer";
-
-  document.body.appendChild(header);
-  document.body.appendChild(body);
-  document.body.appendChild(footer);
-
-  return { header, sidebar, main, toc, footer };
+function createElement<Tag extends keyof HTMLElementTagNameMap>(
+  tag: Tag,
+  className: string
+): HTMLElementTagNameMap[Tag] {
+  const element = document.createElement(tag);
+  element.className = className;
+  return element;
 }
 
-// ============================================================
-// WikiRouter — SPA routing
-// ============================================================
+function createShell(config: WikiConfig): ShellElements {
+  const header = createElement("header", "lbw-header");
+  const headerInner = createElement("div", "lbw-header-inner");
+  header.appendChild(headerInner);
+
+  const body = createElement("div", "lbw-body");
+  const sidebar = createElement("nav", "lbw-sidebar");
+  const main = createElement("main", "lbw-main");
+  const toc = createElement("nav", "lbw-toc");
+  body.append(sidebar, main);
+  if (config.tableOfContents) body.appendChild(toc);
+
+  const footer = createElement("footer", "lbw-footer");
+
+  document.body.replaceChildren(header, body, footer);
+  return { headerInner, sidebar, main, toc, footer };
+}
+
+function splitPageNames(page: string): string[] {
+  return page.split(",").map((pageName) => pageName.trim());
+}
 
 function getCurrentPage(config: WikiConfig): string {
   const defaultPage = config.defaultPage ?? DEFAULT_PAGE;
@@ -178,14 +134,10 @@ function setupRouter(
     onNavigate(page);
   };
 
-  // Intercept navigation links
-  const linkSelector = 'a[href*="?page="]';
-
   document.addEventListener("click", (event) => {
-    if (event.defaultPrevented) return;
-    if (event.button !== 0) return;
+    if (event.defaultPrevented || event.button !== 0) return;
 
-    const link = (event.target as Element).closest?.(linkSelector) as HTMLAnchorElement | null;
+    const link = (event.target as Element).closest?.<HTMLAnchorElement>('a[href*="?page="]');
     if (!link) return;
 
     if (
@@ -206,16 +158,11 @@ function setupRouter(
     navigate(page);
   });
 
-  // Browser back/forward
   window.addEventListener("popstate", () => {
     const page = getCurrentPage(config);
     if (page !== currentPage) navigate(page);
   });
 }
-
-// ============================================================
-// WikiNav — sidebar navigation
-// ============================================================
 
 function updateActiveNav(sidebar: HTMLElement, page: string): void {
   sidebar.querySelectorAll("a").forEach((link) => {
@@ -228,20 +175,16 @@ function updateTitle(
   page: string,
   siteTitle: string | undefined
 ): void {
-  const first = page.split(",")[0].trim();
+  const [firstPage] = splitPageNames(page);
   const sidebarLinks = Array.from(sidebar.querySelectorAll("a"));
   const titleLink =
     sidebarLinks.find((link) => getLinkPage(link) === page) ??
-    sidebarLinks.find((link) => getLinkPage(link) === first);
+    sidebarLinks.find((link) => getLinkPage(link) === firstPage);
   const label = titleLink?.textContent?.trim();
   document.title = label && siteTitle
     ? `${label} - ${siteTitle}`
     : label ?? siteTitle ?? "";
 }
-
-// ============================================================
-// WikiTOC — auto-generated table of contents
-// ============================================================
 
 function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
   const tocConfig =
@@ -262,17 +205,9 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
   );
 
   headings.forEach((heading) => {
-    const level = parseInt(
-      Array.from(heading.classList)
-        .find((className) => className.startsWith("lbs-heading-"))
-        ?.replace("lbs-heading-", "") ?? "2",
-      10
-    );
+    const level = Number(heading.tagName.slice(1));
     const text = heading.textContent?.trim() ?? "";
-    // Use existing id or generate one
-    if (!heading.id) {
-      heading.id = uniqueSlug(text, usedIds);
-    }
+    if (!heading.id) heading.id = uniqueSlug(text, usedIds);
     entries.push({ level, depth: level - Math.max(minLevel, 1), text, id: heading.id });
   });
 
@@ -281,20 +216,17 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
 
 function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
   if (entries.length === 0) {
-    tocNav.innerHTML = "";
+    tocNav.replaceChildren();
     return;
   }
 
-  const title = document.createElement("div");
-  title.className = "lbw-toc-title";
+  const title = createElement("div", "lbw-toc-title");
   title.textContent = "On this page";
 
-  const list = document.createElement("ul");
-  list.className = "lbw-toc-list";
+  const list = createElement("ul", "lbw-toc-list");
 
   for (const entry of entries) {
-    const item = document.createElement("li");
-    item.className = `lbw-toc-item lbw-toc-level-${entry.level} lbw-toc-depth-${entry.depth}`;
+    const item = createElement("li", `lbw-toc-item lbw-toc-level-${entry.level} lbw-toc-depth-${entry.depth}`);
     const link = document.createElement("a");
     link.href = `#${entry.id}`;
     link.textContent = entry.text;
@@ -310,24 +242,16 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
     list.appendChild(item);
   }
 
-  tocNav.innerHTML = "";
-  tocNav.appendChild(title);
-  tocNav.appendChild(list);
+  tocNav.replaceChildren(title, list);
 }
 
 function renderPageLoadError(container: HTMLElement, page: string): void {
-  const paragraph = document.createElement("p");
-  paragraph.className = "lbs-paragraph";
+  const paragraph = createElement("p", "lbs-paragraph");
   paragraph.textContent = `This page could not be loaded: ${page}`;
-  const message = document.createElement("div");
-  message.className = "lbw-not-found";
+  const message = createElement("div", "lbw-not-found");
   message.appendChild(paragraph);
   container.replaceChildren(message);
 }
-
-// ============================================================
-// initWiki — main entry point
-// ============================================================
 
 /**
  * Initialize a lobster-wiki site.
@@ -349,36 +273,19 @@ export async function initWiki(
     config = configOrUrl;
   }
 
-  const lobsterUrl = config.lobsterUrl ?? DEFAULT_LOBSTER_URL;
   const contentDir = config.contentDir ?? DEFAULT_CONTENT_DIR;
-
-  // Load lobster.js
-  const { loadMarkdown } = await getLobster(lobsterUrl);
-
-  // Create DOM scaffold
+  const loadMarkdown = await importLoadMarkdown(config.lobsterUrl ?? DEFAULT_LOBSTER_URL);
   const shell = createShell(config);
 
-  // Load header content
-  if (config.header) {
-    await loadMarkdown(config.header, shell.header.querySelector(".lbw-header-inner")!);
-  }
-
-  // Load footer content
-  if (config.footer) {
-    await loadMarkdown(config.footer, shell.footer);
-  }
-
-  // Load sidebar navigation
+  if (config.header) await loadMarkdown(config.header, shell.headerInner);
+  if (config.footer) await loadMarkdown(config.footer, shell.footer);
   await loadMarkdown(config.navigation, shell.sidebar);
 
   let latestPageLoad = 0;
 
-  // Page loader
   async function loadPage(page: string): Promise<void> {
     const pageLoad = ++latestPageLoad;
-    const sources = page
-      .split(",")
-      .map((pageName) => `${contentDir}${pageName.trim()}.md`);
+    const sources = splitPageNames(page).map((pageName) => `${contentDir}${pageName}.md`);
     const content = document.createElement("div");
     try {
       await loadMarkdown(sources.length === 1 ? sources[0] : sources, content);
@@ -392,11 +299,7 @@ export async function initWiki(
     updateActiveNav(shell.sidebar, page);
     updateTitle(shell.sidebar, page, config.title);
 
-    // Build TOC after content is rendered
-    if (config.tableOfContents) {
-      const entries = buildToc(shell.main, config);
-      renderToc(shell.toc, entries);
-    }
+    if (config.tableOfContents) renderToc(shell.toc, buildToc(shell.main, config));
 
     const fragmentTarget = getFragmentTarget();
     if (fragmentTarget) {
@@ -406,10 +309,6 @@ export async function initWiki(
     }
   }
 
-  // Set up routing
   setupRouter(config, loadPage);
-
-  // Load initial page
-  const initialPage = getCurrentPage(config);
-  await loadPage(initialPage);
+  await loadPage(getCurrentPage(config));
 }
