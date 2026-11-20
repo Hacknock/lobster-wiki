@@ -245,9 +245,6 @@ a:hover { text-decoration: underline; }
 .lbs-footnotes ol { padding-left: 1.5em; }
 .lbs-footnote-item { margin: 0.3em 0; color: var(--lbw-muted); }
 
-/* Warp — hidden anchors */
-.lbs-warp { display: none; }
-
 /* ═══════════════════════════════════════════════════════════════
    Responsive
    ═══════════════════════════════════════════════════════════════ */

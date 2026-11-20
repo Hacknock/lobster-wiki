@@ -152,10 +152,10 @@ The size specifier maps to standard HTML attributes:
 
 ```html
 <!-- ![alt](url =400x) -->
-<img class="lbs-image" src="url" alt="alt" width="400">
+<img src="url" alt="alt" width="400" class="lbs-image">
 
 <!-- ![alt](url =300x150) -->
-<img class="lbs-image" src="url" alt="alt" width="300" height="150">
+<img src="url" alt="alt" width="300" height="150" class="lbs-image">
 ```
 
 Style images via the `.lbs-image` class — for example `max-width: 100%` to make them responsive.

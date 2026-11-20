@@ -20,7 +20,7 @@ Use triple backticks. Add a language identifier for syntax highlighting:
 
 ````markdown
 ```js
-import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
+import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
 
 loadMarkdown("./content.md", document.getElementById("content"));
 ```
@@ -29,17 +29,17 @@ loadMarkdown("./content.md", document.getElementById("content"));
 **Result:**
 
 ```js
-import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
+import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
 
 loadMarkdown("./content.md", document.getElementById("content"));
 ```
 
 ## Code block with filename
 
-Add a filename on the line immediately before the opening fence:
+Add a filename after the language, separated by a colon:
 
 ````markdown
-```html style.css
+```css:style.css
 body {
   font-family: system-ui, sans-serif;
 }
@@ -48,7 +48,7 @@ body {
 
 **Result:**
 
-```html style.css
+```css:style.css
 body {
   font-family: system-ui, sans-serif;
 }
@@ -85,8 +85,8 @@ A fenced code block with a language and filename renders as:
 
 ```html
 <div class="lbs-code-block">
-  <p class="lbs-code-filename">style.css</p>
-  <pre data-language="html"><code class="language-html">…</code></pre>
+  <div class="lbs-code-filename">style.css</div>
+  <pre data-language="css" data-filename="style.css"><code class="language-css">…</code></pre>
 </div>
 ```
 
