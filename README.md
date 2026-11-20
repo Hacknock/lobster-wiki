@@ -172,6 +172,7 @@ All options are defined in `wiki.config.json`:
 | `lobsterUrl`      | URL to lobster.js                                                                      | jsDelivr `@hacknock/lobster@0.6` |
 
 `minLevel` and `maxLevel` are heading levels from 1 to 6 and default to 2 and 4.
+A page usually starts with its title as an `h1`, so `minLevel: 1` is not recommended: the title would be the first entry of every table of contents.
 
 By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.6` release line, so it receives patch releases only. Set `lobsterUrl` to use a different version or a self-hosted copy.
 
@@ -201,6 +202,7 @@ lobster-wiki builds this layout around your content:
 | `lbw-toc-title` | The "On this page" heading of the table of contents |
 | `lbw-toc-list` | The list of table of contents entries |
 | `lbw-toc-item`, `lbw-toc-level-N` | A table of contents entry for a heading of level N |
+| `lbw-toc-depth-N` | A table of contents entry N levels below `minLevel` (0 for `minLevel` itself) |
 
 The content itself is rendered by lobster.js with `lbs-*` classes, as described in the [lobster.js README](https://github.com/Hacknock/lobsterjs).
 

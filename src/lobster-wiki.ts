@@ -25,6 +25,7 @@ export interface WikiConfig {
 
 interface TocEntry {
   level: number;
+  depth: number;
   text: string;
   id: string;
 }
@@ -272,7 +273,7 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
     if (!heading.id) {
       heading.id = uniqueSlug(text, usedIds);
     }
-    entries.push({ level, text, id: heading.id });
+    entries.push({ level, depth: level - Math.max(minLevel, 1), text, id: heading.id });
   });
 
   return entries;
@@ -293,7 +294,7 @@ function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
 
   for (const entry of entries) {
     const item = document.createElement("li");
-    item.className = `lbw-toc-item lbw-toc-level-${entry.level}`;
+    item.className = `lbw-toc-item lbw-toc-level-${entry.level} lbw-toc-depth-${entry.depth}`;
     const link = document.createElement("a");
     link.href = `#${entry.id}`;
     link.textContent = entry.text;
