@@ -12,7 +12,9 @@ The **Warp** system lets you define content once and place it anywhere in the la
 This content can be placed anywhere.
 :::
 
-See it here: [~my-block]
+See it here:
+
+[~my-block]
 ```
 
 The warp block itself is hidden. Only the reference renders the content.
@@ -135,5 +137,8 @@ Define warps in `shared.md`, reference them in `page.md` — they resolve correc
 
 - A `:::warp` block **must** have an id: `:::warp my-id`
 - The `[~id]` reference can appear **before or after** the definition
-- Warp blocks render as hidden elements (`display: none`) in the output
-- References are replaced inline with the warp block's content
+- A `:::warp` block renders nothing where it is defined; only its references show its content
+- A reference on its own line is replaced by the warp's blocks, and a reference in a table cell fills the cell
+- Do not put a reference in the middle of a paragraph: the warp's blocks would end up inside the `<p>`, which is not valid HTML
+- When the same id is defined more than once, the last definition wins
+- A reference without a matching definition stays as plain text
