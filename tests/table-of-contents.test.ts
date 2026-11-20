@@ -36,15 +36,37 @@ describe("configuration", () => {
     const wiki = await openPage(headings([1, "Title"], [2, "Two"], [3, "Three"], [4, "Four"], [5, "Five"]));
     expect(wiki.document.querySelector(".lbw-toc-title")?.textContent).toBe("On this page");
     expect(wiki.entries()).toEqual([
-      { text: "Two", href: "#two", className: "lbw-toc-item lbw-toc-level-2" },
-      { text: "Three", href: "#three", className: "lbw-toc-item lbw-toc-level-3" },
-      { text: "Four", href: "#four", className: "lbw-toc-item lbw-toc-level-4" },
+      { text: "Two", href: "#two", className: "lbw-toc-item lbw-toc-level-2 lbw-toc-depth-0" },
+      { text: "Three", href: "#three", className: "lbw-toc-item lbw-toc-level-3 lbw-toc-depth-1" },
+      { text: "Four", href: "#four", className: "lbw-toc-item lbw-toc-level-4 lbw-toc-depth-2" },
     ]);
   });
 
   test("follows minLevel and maxLevel", async () => {
     const wiki = await openPage(headings([2, "Two"], [3, "Three"], [4, "Four"], [5, "Five"]), { minLevel: 3, maxLevel: 5 });
     expect(wiki.entries().map((entry) => entry.text)).toEqual(["Three", "Four", "Five"]);
+  });
+
+  test("counts the depth of each entry from minLevel", async () => {
+    const wiki = await openPage(headings([3, "Three"], [4, "Four"]), { minLevel: 3, maxLevel: 4 });
+    expect(wiki.entries().map((entry) => entry.className)).toEqual([
+      "lbw-toc-item lbw-toc-level-3 lbw-toc-depth-0",
+      "lbw-toc-item lbw-toc-level-4 lbw-toc-depth-1",
+    ]);
+  });
+
+  test("includes h1 when minLevel is 1", async () => {
+    const wiki = await openPage(headings([1, "Title"], [2, "Two"], [3, "Three"]), { minLevel: 1, maxLevel: 2 });
+    expect(wiki.entries()).toEqual([
+      { text: "Title", href: "#title", className: "lbw-toc-item lbw-toc-level-1 lbw-toc-depth-0" },
+      { text: "Two", href: "#two", className: "lbw-toc-item lbw-toc-level-2 lbw-toc-depth-1" },
+    ]);
+  });
+
+  test("is empty when minLevel is greater than maxLevel", async () => {
+    const wiki = await openPage(headings([2, "Two"], [3, "Three"]), { minLevel: 4, maxLevel: 3 });
+    expect(wiki.main().querySelector(".lbs-heading-2")?.textContent).toBe("Two");
+    expect(wiki.document.querySelector(".lbw-toc")?.innerHTML).toBe("");
   });
 
   test("is emptied on a page without headings", async () => {
