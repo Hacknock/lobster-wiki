@@ -19,7 +19,7 @@ export interface WikiConfig {
   defaultPage?: string;
   /** Table of contents configuration (default: false) */
   tableOfContents?: boolean | { minLevel?: number; maxLevel?: number };
-  /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js") */
+  /** URL to lobster.js (default: "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js") */
   lobsterUrl?: string;
 }
 
@@ -34,7 +34,7 @@ interface TocEntry {
 // ============================================================
 
 const DEFAULT_LOBSTER_URL =
-  "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
+  "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
 const DEFAULT_CONTENT_DIR = "./content/";
 const DEFAULT_PAGE = "intro";
 
@@ -248,13 +248,13 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
   const minLevel = tocConfig.minLevel ?? 2;
   const maxLevel = tocConfig.maxLevel ?? 4;
 
+  const selectors = [1, 2, 3, 4, 5, 6]
+    .filter((level) => level >= minLevel && level <= maxLevel)
+    .map((level) => `.lbs-heading-${level}`);
+  if (selectors.length === 0) return [];
+
   const entries: TocEntry[] = [];
-  const headings = main.querySelectorAll<HTMLElement>(
-    [2, 3, 4, 5, 6]
-      .filter((level) => level >= minLevel && level <= maxLevel)
-      .map((level) => `.lbs-heading-${level}`)
-      .join(",")
-  );
+  const headings = main.querySelectorAll<HTMLElement>(selectors.join(","));
 
   const usedIds = new Set(
     Array.from(document.querySelectorAll("[id]"), (element) => element.id)

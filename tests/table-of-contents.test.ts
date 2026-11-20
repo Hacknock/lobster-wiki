@@ -47,6 +47,20 @@ describe("configuration", () => {
     expect(wiki.entries().map((entry) => entry.text)).toEqual(["Three", "Four", "Five"]);
   });
 
+  test("includes h1 when minLevel is 1", async () => {
+    const wiki = await openPage(headings([1, "Title"], [2, "Two"], [3, "Three"]), { minLevel: 1, maxLevel: 2 });
+    expect(wiki.entries()).toEqual([
+      { text: "Title", href: "#title", className: "lbw-toc-item lbw-toc-level-1" },
+      { text: "Two", href: "#two", className: "lbw-toc-item lbw-toc-level-2" },
+    ]);
+  });
+
+  test("is empty when minLevel is greater than maxLevel", async () => {
+    const wiki = await openPage(headings([2, "Two"], [3, "Three"]), { minLevel: 4, maxLevel: 3 });
+    expect(wiki.main().querySelector(".lbs-heading-2")?.textContent).toBe("Two");
+    expect(wiki.document.querySelector(".lbw-toc")?.innerHTML).toBe("");
+  });
+
   test("is emptied on a page without headings", async () => {
     const wiki = await openPage(headings([2, "Setup"]));
     wiki.click('.lbw-sidebar a[href="?page=empty"]');
