@@ -216,7 +216,7 @@ function buildToc(main: HTMLElement, config: WikiConfig): TocEntry[] {
 
 function renderToc(tocNav: HTMLElement, entries: TocEntry[]): void {
   if (entries.length === 0) {
-    tocNav.innerHTML = "";
+    tocNav.replaceChildren();
     return;
   }
 
