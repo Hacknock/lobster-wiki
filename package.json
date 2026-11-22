@@ -1,6 +1,6 @@
 {
   "name": "@hacknock/lobster-wiki",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Wiki/multi-page site extension for lobster.js — Markdown-driven, zero-config",
   "keywords": [
     "lobster",
