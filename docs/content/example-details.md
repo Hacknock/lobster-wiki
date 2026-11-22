@@ -31,8 +31,6 @@ Any lobster.js Markdown is valid inside a `:::details` block:
 | :-------------- | :------- | :---------------------- |
 | `loadMarkdown`  | Promise  | Fetch & render to DOM   |
 | `toHTML`        | string   | Parse & render to HTML  |
-| `parseDocument` | Document | Parse to AST            |
-| `renderDocument`| string   | Render AST to HTML      |
 
 :::
 ```
@@ -45,8 +43,6 @@ Any lobster.js Markdown is valid inside a `:::details` block:
 | :--------------- | :------- | :--------------------- |
 | `loadMarkdown`   | Promise  | Fetch & render to DOM  |
 | `toHTML`         | string   | Parse & render to HTML |
-| `parseDocument`  | Document | Parse to AST           |
-| `renderDocument` | string   | Render AST to HTML     |
 
 :::
 
@@ -55,7 +51,7 @@ Any lobster.js Markdown is valid inside a `:::details` block:
 :::details Show full example
 
 ```js
-import { loadMarkdown } from "https://hacknock.github.io/lobsterjs/lobster.js";
+import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
 
 const content = document.getElementById("content");
 
@@ -91,4 +87,4 @@ Every element gets an `lbs-*` class. See the [Introduction](?page=intro) for the
 </details>
 ```
 
-The `open` attribute works as expected — browsers remember the state and screen readers announce it correctly.
+The toggle is the browser's native `<details>` behavior, so it works with the keyboard and screen readers without any script.

@@ -17,7 +17,7 @@ Add a single `<script type="module">` to your HTML:
   <body>
     <div id="content"></div>
     <script type="module">
-      import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.5/dist/lobster.js";
+      import { loadMarkdown } from "https://cdn.jsdelivr.net/npm/@hacknock/lobster@0.6/dist/lobster.js";
       loadMarkdown("./content.md", document.getElementById("content"));
     </script>
   </body>
@@ -57,7 +57,7 @@ loadMarkdown(["./shared.md", "./page.md"], document.getElementById("content"));
 One-liner for server-side or offline use:
 
 ```js
-import { toHTML } from "lobsterjs";
+import { toHTML } from "@hacknock/lobster";
 const html = toHTML("# Hello **world**");
 ```
 
@@ -84,6 +84,8 @@ lbs-heading-1 … lbs-heading-6   Headings
 lbs-paragraph                    Paragraph
 lbs-emphasis / lbs-strong        Inline
 lbs-code-span / lbs-code-block   Code
+lbs-blockquote                   Blockquote
+lbs-ul / lbs-ol / lbs-list-item  Lists
 lbs-table / lbs-table-silent     Tables
 lbs-details / lbs-summary        Collapsible
 lbs-footnote-ref / lbs-footnotes Footnotes

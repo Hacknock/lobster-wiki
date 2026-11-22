@@ -151,7 +151,7 @@ initWiki("./wiki.config.json");
 
 - **SPA routing** — `?page=slug` query parameters with browser history support
 - **Sidebar navigation** — loaded from a Markdown file (`nav.md`) with active link highlighting
-- **Auto-generated table of contents** — builds an "On this page" section from headings (h2-h4)
+- **Auto-generated table of contents** — builds an "On this page" section from headings (h2-h4 by default)
 - **Shared header / footer** — specify via `.md` file path in config
 - **Responsive** — sidebar collapses on mobile, TOC hides on narrow screens
 - **CSS-first** — wiki layout uses `lbw-*` classes; content uses lobster.js `lbs-*` classes
@@ -169,9 +169,12 @@ All options are defined in `wiki.config.json`:
 | `contentDir`      | Directory containing page Markdown files                                               | `./content/`     |
 | `defaultPage`     | Default page slug when no `?page=` is specified                                        | `intro`          |
 | `tableOfContents` | Enable auto-generated table of contents (`true` or `{ "minLevel": 2, "maxLevel": 4 }`) | `false`          |
-| `lobsterUrl`      | URL to lobster.js                                                                      | jsDelivr `@hacknock/lobster@0.5` |
+| `lobsterUrl`      | URL to lobster.js                                                                      | jsDelivr `@hacknock/lobster@0.6` |
 
-By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.5` release line, so it receives patch releases only. Set `lobsterUrl` to use a different version or a self-hosted copy.
+`minLevel` and `maxLevel` are heading levels from 1 to 6 and default to 2 and 4.
+A page usually starts with its title as an `h1`, so `minLevel: 1` is not recommended: the title would be the first entry of every table of contents.
+
+By default, lobster-wiki loads lobster.js from jsDelivr pinned to the `0.6` release line, so it receives patch releases only. Set `lobsterUrl` to use a different version or a self-hosted copy.
 
 ## Styling
 
@@ -199,6 +202,7 @@ lobster-wiki builds this layout around your content:
 | `lbw-toc-title` | The "On this page" heading of the table of contents |
 | `lbw-toc-list` | The list of table of contents entries |
 | `lbw-toc-item`, `lbw-toc-level-N` | A table of contents entry for a heading of level N |
+| `lbw-toc-depth-N` | A table of contents entry N levels below `minLevel` (0 for `minLevel` itself) |
 
 The content itself is rendered by lobster.js with `lbs-*` classes, as described in the [lobster.js README](https://github.com/Hacknock/lobsterjs).
 
